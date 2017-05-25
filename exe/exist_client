@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+require "exist_client"
+
+case ARGV[0]
+when "report"
+  ExistClient.report
+when "setup"
+  ExistClient.setup
+else
+  puts %{Available commands are "report" and "setup"}
+end
