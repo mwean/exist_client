@@ -1,12 +1,52 @@
 #!/usr/bin/env ruby
 
+require "cri"
+
 require "exist_client"
 
-case ARGV[0]
-when "report"
-  ExistClient.report
-when "setup"
-  ExistClient.setup
-else
-  puts %{Available commands are "report" and "setup"}
+default_command = Cri::Command.define do
+  name        "exist_client"
+  usage       "exist_client SUBCOMMAND [options]"
+  summary     "Send metrics to Exist.io"
+  description "Make sure to get an API key and make it available as the EXIST_API_KEY environment variable"
+
+  flag :h, :help, "show help for this command" do |_value, cmd|
+    puts cmd.help
+    exit 0
+  end
+
+  flag :v, :version, "show version number" do |_value, cmd|
+    puts ExistClient::VERSION
+    exit 0
+  end
+
+  run do |_opts, _args, cmd|
+    puts cmd.help
+    exit 0
+  end
 end
+
+setup = Cri::Command.define do
+  name "setup"
+  usage "setup [options]"
+  summary "Installs required files and directories"
+
+  run do |_opts, _args, _cmd|
+    ExistClient.setup
+  end
+end
+
+report = Cri::Command.define do
+  name "report"
+  usage "report [options]"
+  summary "Sends configured metrics to Exist.io"
+
+  run do |_opts, _args, _cmd|
+    ExistClient.report
+  end
+end
+
+default_command.add_command(setup)
+default_command.add_command(report)
+
+default_command.run(ARGV)
