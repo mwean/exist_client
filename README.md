@@ -1,41 +1,60 @@
-# ExistClient
+# ExistClient #
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/exist_client`. To experiment with that code, run `bin/console` for an interactive prompt.
+A tool for reporting metrics to [Exist.io](https://exist.io/?referred_by=matthewweanmwean). It currently supports time tracking and completed tasks and supports plugins to work with different apps.
 
-TODO: Delete this and the text above, and describe your gem
+## Installation ##
 
-## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'exist_client'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
+Install the gem:
 
     $ gem install exist_client
 
-## Usage
+Run the setup command:
 
-TODO: Write usage instructions here
+    $ exist_client setup
 
-## Development
+This will create a new directory called `.exist` in your home folder. Inside is a config file `config.yml` where you can configure ExistClient.
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+## Configuration ##
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+In the `config.yml` file, you can specify which plugins to use as well as the cutoff hour to switch to a new day (it defaults to 5am).
 
-## Contributing
+```yaml
+plugins:
+  tasks: omni_focus
+  time_tracking: qbserve
+cutoff_hour: 3
+```
+
+## Plugins ##
+
+### Tasks ###
+- [OmniFocus](https://github.com/mwean/exist_client-omni_focus)
+
+### Time Tracking ###
+- [Qbserve](https://github.com/mwean/exist_client-qbserve)
+
+## Usage ##
+
+In order to use the client, you will need an Exist API key. You can generate one [here](https://exist.io/account/apps/), then make it available as the environment variable `EXIST_API_KEY`.
+
+Once you have your API key, you can send metrics manually with `exist_client report`.
+
+If you're on a Mac and you want to run the report automatically, you can create a launchd agent. You can see an example that runs every day at 1pm [here](launchd_example.plist). The agent runs a helper command that looks like this:
+
+```bash
+#!/bin/bash
+
+source ~/.secrets # Load your Exist API key
+sleep 5 # Wait for network
+
+# You may need to use something like ~/.rbenv/shims/exist_client if you use a ruby version manager
+~/.rbenv/shims/exist_client report
+```
+
+## Contributing ##
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/exist_client. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
-
-## License
+## License ##
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
